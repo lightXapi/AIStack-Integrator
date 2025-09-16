@@ -56,15 +56,17 @@ class LightXAIVirtualTryOnAPI {
     /**
      * Try on virtual outfit using AI
      * @param {string} imageUrl - URL of the input image (person)
-     * @param {string} styleImageUrl - URL of the outfit reference image
+     * @param {string} outfitImageUrl - URL of the outfit reference image
+     * @param {number} segmentationType - Optional segmentation type (default: 2)
      * @returns {Promise<string>} Order ID for tracking
      */
-    async tryOnOutfit(imageUrl, styleImageUrl) {
+    async tryOnOutfit(imageUrl, outfitImageUrl, segmentationType = 2) {
         const endpoint = `${this.baseURL}/v2/aivirtualtryon`;
 
         const payload = {
             imageUrl: imageUrl,
-            styleImageUrl: styleImageUrl
+            outfitImageUrl: outfitImageUrl,
+            segmentationType: segmentationType
         };
 
         try {
@@ -86,7 +88,8 @@ class LightXAIVirtualTryOnAPI {
             console.log(`⏱️  Average response time: ${orderInfo.avgResponseTimeInSec} seconds`);
             console.log(`📊 Status: ${orderInfo.status}`);
             console.log(`👤 Person image: ${imageUrl}`);
-            console.log(`👗 Outfit image: ${styleImageUrl}`);
+            console.log(`👗 Outfit image: ${outfitImageUrl}`);
+            console.log(`🔧 Segmentation type: ${segmentationType}`);
 
             return orderInfo.orderId;
 
@@ -186,10 +189,11 @@ class LightXAIVirtualTryOnAPI {
      * Complete workflow: Upload images and try on virtual outfit
      * @param {Buffer|string} personImageData - Person image data or file path
      * @param {Buffer|string} outfitImageData - Outfit reference image data or file path
+     * @param {number} segmentationType - Optional segmentation type (default: 2)
      * @param {string} contentType - MIME type
      * @returns {Promise<Object>} Final result with output URL
      */
-    async processVirtualTryOn(personImageData, outfitImageData, contentType = 'image/jpeg') {
+    async processVirtualTryOn(personImageData, outfitImageData, segmentationType = 2, contentType = 'image/jpeg') {
         console.log('🚀 Starting LightX AI Virtual Outfit Try-On API workflow...');
 
         // Step 1: Upload person image
@@ -204,7 +208,7 @@ class LightXAIVirtualTryOnAPI {
 
         // Step 3: Try on virtual outfit
         console.log('👗 Trying on virtual outfit...');
-        const orderId = await this.tryOnOutfit(personImageUrl, outfitImageUrl);
+        const orderId = await this.tryOnOutfit(personImageUrl, outfitImageUrl, segmentationType);
 
         // Step 4: Wait for completion
         console.log('⏳ Waiting for processing to complete...');
@@ -724,6 +728,7 @@ async function runExample() {
         const result1 = await lightx.processVirtualTryOn(
             personImagePath,
             outfitImagePath,
+            2, // segmentationType
             'image/jpeg'
         );
         console.log('🎉 Casual outfit try-on result:');
@@ -746,6 +751,7 @@ async function runExample() {
             const result = await lightx.processVirtualTryOn(
                 personImagePath,
                 outfitPath,
+                2, // segmentationType
                 'image/jpeg'
             );
             console.log(`🎉 ${outfitPath} try-on result:`);

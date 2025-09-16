@@ -72,14 +72,14 @@ class LightXAIFilterAPI:
         print("✅ Image uploaded successfully")
         return upload_url["imageUrl"]
     
-    def generate_filter(self, image_url: str, text_prompt: str, style_image_url: Optional[str] = None) -> str:
+    def generate_filter(self, image_url: str, text_prompt: str, filter_reference_url: Optional[str] = None) -> str:
         """
         Generate AI filter
         
         Args:
             image_url: URL of the input image
             text_prompt: Text prompt for filter description
-            style_image_url: Optional style image URL
+            filter_reference_url: Optional filter reference image URL
             
         Returns:
             str: Order ID for tracking
@@ -94,9 +94,9 @@ class LightXAIFilterAPI:
             "textPrompt": text_prompt
         }
         
-        # Add style image URL if provided
-        if style_image_url:
-            payload["styleImageUrl"] = style_image_url
+        # Add filter reference URL if provided
+        if filter_reference_url:
+            payload["filterReferenceUrl"] = filter_reference_url
         
         headers = {
             "Content-Type": "application/json",

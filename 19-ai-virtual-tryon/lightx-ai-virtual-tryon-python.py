@@ -72,13 +72,14 @@ class LightXAIVirtualTryOnAPI:
         print("✅ Image uploaded successfully")
         return upload_url["imageUrl"]
     
-    def try_on_outfit(self, image_url: str, style_image_url: str) -> str:
+    def try_on_outfit(self, image_url: str, outfit_image_url: str, segmentation_type: int = 2) -> str:
         """
         Try on virtual outfit using AI
         
         Args:
             image_url: URL of the input image (person)
-            style_image_url: URL of the outfit reference image
+            outfit_image_url: URL of the outfit reference image
+            segmentation_type: Optional segmentation type (default: 2)
             
         Returns:
             str: Order ID for tracking
@@ -90,7 +91,8 @@ class LightXAIVirtualTryOnAPI:
         
         payload = {
             "imageUrl": image_url,
-            "styleImageUrl": style_image_url
+            "outfitImageUrl": outfit_image_url,
+            "segmentationType": segmentation_type
         }
         
         headers = {

@@ -103,15 +103,17 @@ class LightXAIVirtualTryOnAPI(private val apiKey: String) {
     /**
      * Try on virtual outfit using AI
      * @param imageUrl URL of the input image (person)
-     * @param styleImageUrl URL of the outfit reference image
+     * @param outfitImageUrl URL of the outfit reference image
+     * @param segmentationType Optional segmentation type (default: 2)
      * @return Order ID for tracking
      */
-    suspend fun tryOnOutfit(imageUrl: String, styleImageUrl: String): String {
+    suspend fun tryOnOutfit(imageUrl: String, outfitImageUrl: String, segmentationType: Int = 2): String {
         val endpoint = "$BASE_URL/v2/aivirtualtryon"
         
         val requestBody = buildJsonObject {
             put("imageUrl", imageUrl)
-            put("styleImageUrl", styleImageUrl)
+            put("outfitImageUrl", outfitImageUrl)
+            put("segmentationType", segmentationType)
         }
         
         val request = HttpRequest.newBuilder()
@@ -140,7 +142,8 @@ class LightXAIVirtualTryOnAPI(private val apiKey: String) {
         println("⏱️  Average response time: ${orderInfo.avgResponseTimeInSec} seconds")
         println("📊 Status: ${orderInfo.status}")
         println("👤 Person image: $imageUrl")
-        println("👗 Outfit image: $styleImageUrl")
+        println("👗 Outfit image: $outfitImageUrl")
+        println("🔧 Segmentation type: $segmentationType")
         
         return orderInfo.orderId
     }

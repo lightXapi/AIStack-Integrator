@@ -94,15 +94,17 @@ class LightXAIVirtualTryOnAPI: ObservableObject {
     /**
      * Try on virtual outfit using AI
      * @param imageUrl URL of the input image (person)
-     * @param styleImageUrl URL of the outfit reference image
+     * @param outfitImageUrl URL of the outfit reference image
+     * @param segmentationType Optional segmentation type (default: 2)
      * @return Order ID for tracking
      */
-    func tryOnOutfit(imageUrl: String, styleImageUrl: String) async throws -> String {
+    func tryOnOutfit(imageUrl: String, outfitImageUrl: String, segmentationType: Int = 2) async throws -> String {
         let endpoint = "\(baseURL)/v2/aivirtualtryon"
         
         let requestBody = [
             "imageUrl": imageUrl,
-            "styleImageUrl": styleImageUrl
+            "outfitImageUrl": outfitImageUrl,
+            "segmentationType": segmentationType
         ] as [String: Any]
         
         let request = try createRequest(url: endpoint, method: "POST", body: requestBody)
@@ -127,7 +129,8 @@ class LightXAIVirtualTryOnAPI: ObservableObject {
         print("⏱️  Average response time: \(orderInfo.avgResponseTimeInSec) seconds")
         print("📊 Status: \(orderInfo.status)")
         print("👤 Person image: \(imageUrl)")
-        print("👗 Outfit image: \(styleImageUrl)")
+        print("👗 Outfit image: \(outfitImageUrl)")
+        print("🔧 Segmentation type: \(segmentationType)")
         
         return orderInfo.orderId
     }

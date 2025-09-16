@@ -95,10 +95,10 @@ class LightXAIFilterAPI: ObservableObject {
      * Generate AI filter
      * @param imageUrl URL of the input image
      * @param textPrompt Text prompt for filter description
-     * @param styleImageUrl Optional style image URL
+     * @param filterReferenceUrl Optional filter reference image URL
      * @return Order ID for tracking
      */
-    func generateFilter(imageUrl: String, textPrompt: String, styleImageUrl: String? = nil) async throws -> String {
+    func generateFilter(imageUrl: String, textPrompt: String, filterReferenceUrl: String? = nil) async throws -> String {
         let endpoint = "\(baseURL)/v2/aifilter"
         
         var requestBody = [
@@ -106,9 +106,9 @@ class LightXAIFilterAPI: ObservableObject {
             "textPrompt": textPrompt
         ] as [String: Any]
         
-        // Add style image URL if provided
-        if let styleImageUrl = styleImageUrl {
-            requestBody["styleImageUrl"] = styleImageUrl
+        // Add filter reference URL if provided
+        if let filterReferenceUrl = filterReferenceUrl {
+            requestBody["filterReferenceUrl"] = filterReferenceUrl
         }
         
         let request = try createRequest(url: endpoint, method: "POST", body: requestBody)
@@ -133,8 +133,8 @@ class LightXAIFilterAPI: ObservableObject {
         print("⏱️  Average response time: \(orderInfo.avgResponseTimeInSec) seconds")
         print("📊 Status: \(orderInfo.status)")
         print("🎨 Filter prompt: \"\(textPrompt)\"")
-        if let styleImageUrl = styleImageUrl {
-            print("🎭 Style image: \(styleImageUrl)")
+        if let filterReferenceUrl = filterReferenceUrl {
+            print("🎭 Filter reference: \(filterReferenceUrl)")
         }
         
         return orderInfo.orderId

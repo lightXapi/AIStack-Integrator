@@ -57,10 +57,10 @@ class LightXAIFilterAPI {
      * Generate AI filter
      * @param {string} imageUrl - URL of the input image
      * @param {string} textPrompt - Text prompt for filter description
-     * @param {string} styleImageUrl - Optional style image URL
+     * @param {string} filterReferenceUrl - Optional filter reference image URL
      * @returns {Promise<string>} Order ID for tracking
      */
-    async generateFilter(imageUrl, textPrompt, styleImageUrl = null) {
+    async generateFilter(imageUrl, textPrompt, filterReferenceUrl = null) {
         const endpoint = `${this.baseURL}/v2/aifilter`;
 
         const payload = {
@@ -68,9 +68,9 @@ class LightXAIFilterAPI {
             textPrompt: textPrompt
         };
 
-        // Add style image URL if provided
-        if (styleImageUrl) {
-            payload.styleImageUrl = styleImageUrl;
+        // Add filter reference URL if provided
+        if (filterReferenceUrl) {
+            payload.filterReferenceUrl = filterReferenceUrl;
         }
 
         try {
@@ -92,8 +92,8 @@ class LightXAIFilterAPI {
             console.log(`⏱️  Average response time: ${orderInfo.avgResponseTimeInSec} seconds`);
             console.log(`📊 Status: ${orderInfo.status}`);
             console.log(`🎨 Filter prompt: "${textPrompt}"`);
-            if (styleImageUrl) {
-                console.log(`🎭 Style image: ${styleImageUrl}`);
+            if (filterReferenceUrl) {
+                console.log(`🎭 Filter reference: ${filterReferenceUrl}`);
             }
 
             return orderInfo.orderId;
@@ -194,11 +194,11 @@ class LightXAIFilterAPI {
      * Complete workflow: Upload image and apply AI filter
      * @param {Buffer|string} imageData - Image data or file path
      * @param {string} textPrompt - Text prompt for filter description
-     * @param {Buffer|string} styleImageData - Optional style image data or file path
+     * @param {Buffer|string} filterReferenceData - Optional filter reference image data or file path
      * @param {string} contentType - MIME type
      * @returns {Promise<Object>} Final result with output URL
      */
-    async processFilter(imageData, textPrompt, styleImageData = null, contentType = 'image/jpeg') {
+    async processFilter(imageData, textPrompt, filterReferenceData = null, contentType = 'image/jpeg') {
         console.log('🚀 Starting LightX AI Filter API workflow...');
 
         // Step 1: Upload main image
@@ -206,17 +206,17 @@ class LightXAIFilterAPI {
         const imageUrl = await this.uploadImage(imageData, contentType);
         console.log(`✅ Main image uploaded: ${imageUrl}`);
 
-        // Step 2: Upload style image if provided
-        let styleImageUrl = null;
-        if (styleImageData) {
-            console.log('📤 Uploading style image...');
-            styleImageUrl = await this.uploadImage(styleImageData, contentType);
-            console.log(`✅ Style image uploaded: ${styleImageUrl}`);
+        // Step 2: Upload filter reference image if provided
+        let filterReferenceUrl = null;
+        if (filterReferenceData) {
+            console.log('📤 Uploading filter reference image...');
+            filterReferenceUrl = await this.uploadImage(filterReferenceData, contentType);
+            console.log(`✅ Filter reference image uploaded: ${filterReferenceUrl}`);
         }
 
         // Step 3: Generate filter
         console.log('🎨 Applying AI filter...');
-        const orderId = await this.generateFilter(imageUrl, textPrompt, styleImageUrl);
+        const orderId = await this.generateFilter(imageUrl, textPrompt, filterReferenceUrl);
 
         // Step 4: Wait for completion
         console.log('⏳ Waiting for processing to complete...');
@@ -669,13 +669,13 @@ async function runExample() {
 
         // Load images (replace with your image loading logic)
         const imagePath = 'path/to/input-image.jpg';
-        const styleImagePath = 'path/to/style-image.jpg'; // Optional
+        const filterReferencePath = 'path/to/filter-reference-image.jpg'; // Optional
 
         // Example 1: Text prompt only
         const result1 = await lightx.generateFilterWithValidation(
             imagePath,
             'Transform into oil painting with rich textures and warm colors',
-            null, // No style image
+            null, // No filter reference image
             'image/jpeg'
         );
         console.log('🎉 Oil painting filter result:');
@@ -685,11 +685,11 @@ async function runExample() {
             console.log(`Output: ${result1.output}`);
         }
 
-        // Example 2: Text prompt with style image
+        // Example 2: Text prompt with filter reference image
         const result2 = await lightx.generateFilterWithValidation(
             imagePath,
             'Apply vintage film photography style',
-            styleImagePath, // With style image
+            filterReferencePath, // With filter reference image
             'image/jpeg'
         );
         console.log('🎉 Vintage film filter result:');

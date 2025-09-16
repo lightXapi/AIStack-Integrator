@@ -104,16 +104,16 @@ class LightXAIFilterAPI(private val apiKey: String) {
      * Generate AI filter
      * @param imageUrl URL of the input image
      * @param textPrompt Text prompt for filter description
-     * @param styleImageUrl Optional style image URL
+     * @param filterReferenceUrl Optional filter reference image URL
      * @return Order ID for tracking
      */
-    suspend fun generateFilter(imageUrl: String, textPrompt: String, styleImageUrl: String? = null): String {
+    suspend fun generateFilter(imageUrl: String, textPrompt: String, filterReferenceUrl: String? = null): String {
         val endpoint = "$BASE_URL/v2/aifilter"
         
         val requestBody = buildJsonObject {
             put("imageUrl", imageUrl)
             put("textPrompt", textPrompt)
-            styleImageUrl?.let { put("styleImageUrl", it) }
+            filterReferenceUrl?.let { put("filterReferenceUrl", it) }
         }
         
         val request = HttpRequest.newBuilder()
@@ -142,7 +142,7 @@ class LightXAIFilterAPI(private val apiKey: String) {
         println("⏱️  Average response time: ${orderInfo.avgResponseTimeInSec} seconds")
         println("📊 Status: ${orderInfo.status}")
         println("🎨 Filter prompt: \"$textPrompt\"")
-        styleImageUrl?.let { println("🎭 Style image: $it") }
+        filterReferenceUrl?.let { println("🎭 Filter reference: $it") }
         
         return orderInfo.orderId
     }
